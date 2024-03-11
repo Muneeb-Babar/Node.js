@@ -1,5 +1,6 @@
 import express from "express";
 import Ads from '../models/Ads.mjs'
+import verifyToken from "../middlewares/verifyToken.mjs";
 
 const router=express.Router()
 
@@ -17,7 +18,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/post', async (req, res) => {
+router.post('/post',verifyToken, async (req, res) => {
     try {
         const ad = new Ads(req.body)
         await ad.save()

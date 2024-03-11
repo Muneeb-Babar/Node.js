@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken'
-import jwtsecret from "../config/jwt.mjs";
+import jwtSecret from "../config/jwt.mjs";
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
@@ -19,13 +19,20 @@ fullname: {
     type:String,
     required:true
 },
+tokens: {
+    default: [],
+    type: []
+}
 });
 userSchema.pre('save',function(next){
     const user=this
     //encryption
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(user.password, salt);
-    user.password=hash
+    if (user.isModified('password')) {
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(user.password, salt);
+    
+        user.password = hash
+    }
     next()
 })
 

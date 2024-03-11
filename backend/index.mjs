@@ -1,12 +1,13 @@
 import express from "express";
 import routes from './routes/index.mjs'
 import db from './config/db.mjs'
+import {PORT} from './config/enviroment.mjs'
 
 const app = express();
 
 db.connection.once('open', () => console.log("connected to db")).on("error", (err) => console.log("error connecting db -->", err))
 
-app.listen(4001, function () {
+app.listen(PORT, function () {
     console.log("Server is ready to use");
 });
 app.use(express.json())

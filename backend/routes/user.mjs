@@ -35,13 +35,13 @@ router.post('/login',async(req,res)=>{
         res.status(404).send({message:'Invalid Password'})
         return
     }
-    //step 3:Generatetoken
-    const token=user.generateToken()
+    //Step 3: Generate Token
+    const token = user.generateToken()
     user.tokens.push(token)
     await user.save()
 
-    res.send({message:'User Logged in Successfully'})
-    }
+    res.send({ message: 'User logged in successfully!',token })
+}
     catch(e){
         res.status(404).send({message:e.messsage})
     }
