@@ -22,6 +22,9 @@ async function verifyToken(req,res,next){
             return
         }
         
+        req.userId = decoded._id
+        req.tokenToRemove = token
+
         next()
     } catch (e) {
         res.status(401).send({ message: "Invalid token!" })

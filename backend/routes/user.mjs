@@ -1,5 +1,6 @@
 import express from 'express'
 import Users from '../models/Users.mjs'
+import verifyToken from '../middlewares/verifyToken.mjs'
 
 const router=express.Router()
 
@@ -45,6 +46,11 @@ router.post('/login',async(req,res)=>{
     catch(e){
         res.status(404).send({message:e.messsage})
     }
+})
+
+router.put('/logout',verifyToken,async(req,res)=>{
+    await Users.findByIdAndUpdate(req.userId, { $pull: { tokens: req.tokenToRemove } })
+    res.send({message:'Logged Out Successfully'})
 })
 
 export default router
