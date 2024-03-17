@@ -3,35 +3,28 @@ import Users from '../models/Users.mjs';
 import jwtSecret from '../config/jwt.mjs';
 
 async function verifyToken(req, res, next) {
+    const token = req.headers.authorization?.slice(7)
+
+    if (!token) {
+        res.status(401).send({ message: "No access!" })
+        return
+    }
+
     try {
-        // Extract token from the Authorization header
-        const token = req.headers.authorization?.slice(7);
+        const decoded = jwt.verify(token, jwtSecret)
 
-        // If token is missing, respond with 401 Unauthorized
-        if (!token) {
-            return res.status(401).send({ message: "No access!" });
-        }
+        const tokenExists = await Users.findOne({ tokens: token })
 
-        // Verify the token and decode its payload
-        const decoded = jwt.verify(token, jwtSecret);
-
-        // Check if the token exists in the database
-        const tokenExists = await Users.exists({ tokens: token });
-
-        // If token doesn't exist, respond with 401 Unauthorized
         if (!tokenExists) {
-            return res.status(401).send({ message: "Invalid token!" });
+            res.status(401).send({ message: "Invalid token!" })
+            return
         }
 
-        // Attach user ID and token to the request object
-        req.userId = decoded._id;
-        req.tokenToRemove = token;
-
-        // Call the next middleware or route handler
-        next();
+        req.userId = decoded._id
+        req.tokenToRemove = token
+        next()
     } catch (e) {
-        // If token verification fails, respond with 401 Unauthorized
-        res.status(401).send({ message: "Invalid token!" });
+        res.status(401).send({ message: "Invalid token!" })
     }
 }
 
