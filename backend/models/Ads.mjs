@@ -22,6 +22,10 @@ price: {
     type:Number,
     required:true
 },
+image: {
+    type:String,
+    required:true
+}
 });
 const Ads = mongoose.model('ads', adsSchema);
 
